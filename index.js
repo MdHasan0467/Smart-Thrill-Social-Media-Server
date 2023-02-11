@@ -58,15 +58,35 @@ async function run() {
 		//todo = = = = = = ALL get APIs = = = = = = = = = = =
 	
 	
+
+	
+	
+	
+	
+	
+	
+	
 	
 
     //! < Start >  get status ======>
 	app.get('/status', async (req, res) => {
-		const status = {};
-		const result = await addedCollection.find(status).toArray();
-		
-		res.send(result);
-	});
+		const query = {};
+		const result = await addedCollection.find(query).toArray();
+		res.send(result)
+	})
+
+	//!======END======>
+
+
+
+
+
+    //! < Start >  get photos ======>
+	app.get('/photos', async (req, res) => {
+		const query = {category: 'photos'};
+		const result = await addedCollection.find(query).toArray();
+		res.send(result)
+	})
 
 	//!======END======>
 
@@ -76,9 +96,38 @@ async function run() {
 
 
 
+		//!======START <- get user posted data  by user email ======>
+		app.get('/my-data/:email', async (req, res) => {
+			const email = req.params.email;
+			console.log(email)
+			const data = { email: email };
+			const result = await addedCollection.find(data).toArray();
+			res.send(result);
+			
+		});
 
-
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+ //!======START <- get user for AuthContext by user email ======>
+   app.get('/:email', async (req, res) => {
+   	const email = req.params.email;
+   	// console.log('email', email);
+   	const user = { email: email };
+   	const result = await usersCollection.findOne(user);
+   	res.send(result);
+   });
+	
+	// !======END======>
 
 
 		//todo = = = = = = ALL post APIs = = = = = = = = = = =
