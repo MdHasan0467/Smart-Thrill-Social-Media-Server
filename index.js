@@ -48,6 +48,9 @@ async function run() {
 	// Added Products Collection
 	const addedCollection = client.db('Social-Media').collection('addedStatus');
     
+	// Added Products Collection
+	const addedLikeCollection = client.db('Social-Media').collection('addedLike');
+    
 
 
 
@@ -56,14 +59,6 @@ async function run() {
 
 
 		//todo = = = = = = ALL get APIs = = = = = = = = = = =
-	
-	
-
-	
-	
-	
-	
-	
 	
 	
 	
@@ -81,10 +76,19 @@ async function run() {
 
 
 
+
+
+
     //! < Start >  get photos ======>
-	app.get('/photos', async (req, res) => {
-		const query = {category: 'photos'};
+	app.get('/photos/:email', async (req, res) => {
+		const email = req.params.email;
+		const query = { authorEmail: email };
+		
+		// const options = {
+		// 	sort: { category: 'photos' }
+		// }
 		const result = await addedCollection.find(query).toArray();
+		// console.log(result)
 		res.send(result)
 	})
 
@@ -96,12 +100,13 @@ async function run() {
 
 
 
+
+
 		//!======START <- get user posted data  by user email ======>
-		app.get('/my-data/:email', async (req, res) => {
+		app.get('/data/:email', async (req, res) => {
 			const email = req.params.email;
-			console.log(email)
-			const data = { email: email };
-			const result = await addedCollection.find(data).toArray();
+			const data = { authorEmail: email };
+		    const result = await addedCollection.find(data).toArray();
 			res.send(result);
 			
 		});
@@ -118,32 +123,20 @@ async function run() {
 	
 	
 	
- //!======START <- get user for AuthContext by user email ======>
-   app.get('/:email', async (req, res) => {
-   	const email = req.params.email;
-   	// console.log('email', email);
-   	const user = { email: email };
-   	const result = await usersCollection.findOne(user);
-   	res.send(result);
-   });
-	
-	// !======END======>
+	//!======START <- get user for AuthContext by user email ======>
+	app.get('/:email', async (req, res) => {
+		const email = req.params.email;
+		// console.log('email', email);
+		const user = { email: email };
+		const result = await usersCollection.findOne(user);
+		// console.log('result',result);
+		res.send(result)
+	});
+		
+		// !======END======>
 
 
 		//todo = = = = = = ALL post APIs = = = = = = = = = = =
-
-
-
-
-
-    //! < Start >  add a new status ======>
-	app.post('/status', async (req, res) => {
-		const status = req.body;
-		const result = await addedCollection.insertOne(status);
-		res.send(result);
-	});
-
-	//!======END======>
 
 
 
@@ -163,8 +156,26 @@ async function run() {
 
 
 
+    //! < Start >  add a new status ======>
+	app.post('/status', async (req, res) => {
+		const status = req.body;
+		const result = await addedCollection.insertOne(status);
+		res.send(result);
+	});
 
-			//todo = = = = = = ALL post APIs = = = = = = = = = = =
+	//!======END======>
+
+
+
+
+
+
+
+
+
+
+
+			//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
 	
 	    //! < Start >  Delete status ======>
 		app.delete('/:id', async (req, res) => {
@@ -180,7 +191,30 @@ async function run() {
 	
 	
 	
+			//todo = = = = = = ALL Update APIs = = = = = = = = = 
 	
+		//! update an ordered data by clicking wish page buy now button using it's ID
+		
+		app.put('/like/:id', async (req, res) => {
+			const id = req.params.id;
+			const filter = { _id: ObjectId(id) };
+			const data = req.body;
+			// console.log(data);
+			const option = { upsert: true };
+			const updatedData = {
+				$set: {
+					
+					likerName : data.likerName,
+					likerEmail : data.likerEmail,
+					LikerImage : data.LikerImage,
+					likes : data.likes,
+				}
+			}
+			const result = await addedCollection.updateOne(filter, updatedData, option );
+			console.log(result);
+			res.send(result);
+	
+			})
 
 }
 run().catch(console.log);
