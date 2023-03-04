@@ -40,6 +40,7 @@ async function run() {
 
 
 
+	//FIXME:
 	//todo = = = = = = ALL Data Collections = = = = = = = = = = =
 	
 	// User Collection
@@ -51,6 +52,10 @@ async function run() {
 	// Added Products Collection
 	const addedAdCollection = client.db('Smart-Thrill').collection('Advertise');
     
+    
+	// Added Chat Collection
+	const addedChatCollection = client.db('Smart-Thrill').collection('Chat');
+    
 
 
 
@@ -58,16 +63,29 @@ async function run() {
 
 
 
-		//todo = = = = = = ALL get APIs = = = = = = = = = = =
+	//FIXME:
+	//todo = = = = = = ALL get APIs = = = = = = = = = = =
 	
 	
 	
+    //! < Start >  get admin ======>
+	app.get('/admin', async (req, res) => {
+		const query = {role : 'admin'};
+		const result = await usersCollection.findOne(query);
+		res.send(result)
+	})
 
-    //! < Start >  get status ======>
-	app.get('/status', async (req, res) => {
-		const query = {};
-		const result = await addedCollection.find(query).toArray();
-		// console.log('status',result)
+	//!======END======>
+
+
+
+
+
+
+    //! < Start >  get Reels ======>
+	app.get('/reels', async (req, res) => {
+		const query = { category: "reels" };
+		const result = await (await addedCollection.find(query).toArray()).reverse();
 		res.send(result)
 	})
 
@@ -79,7 +97,68 @@ async function run() {
 
 
 
-    //! < Start >  get status ======>
+    // //! < Start >  get All Data by pagination ======>
+	// app.get('/allData', async (req, res) => {
+	// 	const page = parseInt(req.query.page);
+	// 	const dataSize = parseInt(req.query.dataSize);
+	// 	const query = {};
+	// 	const result = await (await addedCollection.find(query).skip(page*dataSize).limit(dataSize).toArray());
+	// 	const count = await addedCollection.estimatedDocumentCount();
+	// 	 //TODO: koto gulo data ase seita count korar jonno...
+	// 	res.send({ count, result })
+	// })
+
+	// //!======END======>
+
+
+
+
+
+
+    //! < Start >  get Reels ======>
+	app.get('/allData', async (req, res) => {
+		const query = { category: "reels" };
+		const result = await  addedCollection.find(query).toArray();
+		res.send(result)
+	})
+
+	//!======END======>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //! < Start >  get all Data ======>
+	app.get('/status', async (req, res) => {
+		const page = parseInt(req.query.page);
+		const dataSize = parseInt(req.query.dataSize);
+		const query = {};
+		const result = await (await addedCollection.find(query).skip(page*dataSize).limit(dataSize).toArray());
+		const count = await addedCollection.estimatedDocumentCount();
+		//TODO: koto gulo data ase seita count korar jonno...
+		res.send({ count, result })
+	})
+
+	//!======END======>
+
+
+
+
+
+
+
+    //! < Start >  get ads ======>
 	app.get('/ad-center', async (req, res) => {
 		const query = {};
 		const result = await addedAdCollection.find(query).toArray();
@@ -94,11 +173,11 @@ async function run() {
 
 
 
-    //! < Start >  get status ======>
+
+    //! < Start >  get all user ======>
 	app.get('/my-friends', async (req, res) => {
 		const query = {};
 		const result = await usersCollection.find(query).toArray();
-		console.log('friends',result)
 		res.send(result)
 	})
 
@@ -116,8 +195,8 @@ async function run() {
 		const email = req.params.email;
 		const query = { authorEmail: email, category: "photos" }; 
 		
-		//todo FIXME: first query {authorEmail: email} is for finding user
-		//todo FIXME: And second query {category:"photos"} is for finding category
+		//TODO: first query {authorEmail: email} is for finding user
+		//TODO: And second query {category:"photos"} is for finding category
 		
 		const result = await addedCollection.find(query).toArray();
 		res.send(result)
@@ -137,8 +216,8 @@ async function run() {
 		const email = req.params.email;
 		const query = { authorEmail: email, category: "status" }; 
 		
-		//todo FIXME: first query {authorEmail: email} is for finding user
-		//todo FIXME: And second query {category:"status"} is for finding category
+		//TODO: first query {authorEmail: email} is for finding user
+		//TODO: And second query {category:"status"} is for finding category
 		
 		const result = await addedCollection.find(query).toArray();
 		res.send(result)
@@ -158,8 +237,8 @@ async function run() {
 		const email = req.params.email;
 		const query = { authorEmail: email, category: "feelings" }; 
 		
-		//todo FIXME: first query {authorEmail: email} is for finding user
-		//todo FIXME: And second query {category:"feelings"} is for finding category
+		//TODO: first query {authorEmail: email} is for finding user
+		//TODO: And second query {category:"feelings"} is for finding category
 		
 		const result = await addedCollection.find(query).toArray();
 		res.send(result)
@@ -217,12 +296,32 @@ async function run() {
 	
 	
 	
+
+	
+	
+	
+	
+	
+	//!======START <- get message by receiver email ======>
+	app.get('/chat/:email', async (req, res) => {
+		const email = req.params.email;
+		// console.log(req.params)
+		const user = { receiverEmail: email };
+		const result = await (await addedChatCollection.find(user).toArray()).reverse();
+		res.send(result)
+	});
+		
+		// !======END======>
+	
+	
+	
+	
+	
 	//!======START <- get user for AuthContext by user email ======>
 	app.get('/dynamic/:email', async (req, res) => {
 		const email = req.params.email;
 		const user = { email: email };
 		const result = await usersCollection.findOne(user);
-		console.log(result)
 		res.send(result)
 	});
 		
@@ -249,7 +348,8 @@ async function run() {
 	
 
 
-		//todo = = = = = = ALL post APIs = = = = = = = = = = =
+	 //FIXME:
+	 //todo = = = = = = ALL post APIs = = = = = = = = = = =
 
 
 
@@ -257,10 +357,8 @@ async function run() {
     //! < Start >  add a new user ======>
 	app.post('/users', async (req, res) => {
 		const user = req.body;
-		// console.log(user.email)
 		const email = user.email
 		const filter = await usersCollection.findOne({ email: email });
-		console.log(filter)
 		if (filter === null) {
 			const result = await usersCollection.insertOne(user);
 		     res.send(result);
@@ -268,7 +366,8 @@ async function run() {
 		else {
 			res.status(400).json({ errors: [{ msg: "User already exists" }] });
 		}
-		
+
+		//TODO: Jodi user already data base a store thake taholy 400 message ta dekhabe.... R jodi user already data base a store na thake taholy data ta insert hobe.
 		
 	});
 
@@ -284,6 +383,35 @@ async function run() {
 	app.post('/status', async (req, res) => {
 		const status = req.body;
 		const result = await addedCollection.insertOne(status);
+		res.send(result);
+	});
+
+	//!======END======>
+
+
+
+
+
+
+    //! < Start >  add a new status ======>
+	app.post('/reels', async (req, res) => {
+		const reel = req.body;
+		const result = await addedCollection.insertOne(reel);
+		res.send(result);
+	});
+
+	//!======END======>
+
+
+
+
+
+
+
+    //! < Start >  add a new status ======>
+	app.post('/message', async (req, res) => {
+		const message = req.body;
+		const result = await addedChatCollection.insertOne(message);
 		res.send(result);
 	});
 
@@ -315,7 +443,8 @@ async function run() {
 
 
 
-			//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
+	     //FIXME:
+		//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
 	
 	    //! < Start >  Delete status ======>
 		app.delete('/:id', async (req, res) => {
@@ -331,7 +460,11 @@ async function run() {
 	
 	
 	
-			//todo = = = = = = ALL Update APIs = = = = = = = = = 
+	
+	
+	
+	    //FIXME:
+		//todo = = = = = = ALL Update APIs = = = = = = = = = 
 	
 		//! update an like by clicking home page like button using it's ID
 		
@@ -379,7 +512,7 @@ async function run() {
 				}
 			}
 			const result = await addedCollection.updateOne(filter, updatedData, option );
-			// console.log(result);
+			
 			res.send(result);
 	
 		})
@@ -407,7 +540,35 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			console.log(result);
+			
+			res.send(result);
+	
+		})
+	
+	
+	
+	
+	
+	
+	
+		//! Update User Social Medial in profile page using it's ID
+		
+		app.put('/update-social-media/:email', async (req, res) => {
+			const email = req.params.email;
+			const user = { email: email };
+			const data = req.body;
+			const option = { upsert: true };
+			const updatedData = {
+				$set: {
+					
+					facebookURL : data.facebookURL,
+					githubURL : data.githubURL,
+					linkedinURL : data.linkedinURL,
+					twitterURL : data.twitterURL,
+				}
+			}
+			const result = await usersCollection.updateOne(user, updatedData, option );
+			
 			res.send(result);
 	
 		})
@@ -435,7 +596,7 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			console.log(result);
+			
 			res.send(result);
 	
 		})
@@ -452,6 +613,7 @@ async function run() {
 			const email = req.params.email;
 			const user = { email: email };
 			const data = req.body;
+			// console.log('first')
 			const option = { upsert: true };
 			const updatedData = {
 				$set: {
@@ -459,9 +621,34 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			console.log(result);
+			
 			res.send(result);
 	
+		})
+	
+	
+	
+	
+	
+	
+	
+		//! update User profile photo in profile page  using user email
+		
+		app.put('/update-authorProfile/:email', async (req, res) => {
+			const email = req.params.email;
+			const user = { authorEmail: email };
+			const data = req.body;
+			
+			const option = { upsert: true };
+			const updatedData = {
+				$set: {
+                    authorImage: data.image
+				}
+			}
+			const result = await addedCollection.updateMany(user, updatedData, option );
+			
+			res.send(result);
+			console.log(result)
 		})
 	
 	
@@ -484,7 +671,7 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			console.log(result);
+			
 			res.send(result);
 	
 		})
@@ -506,7 +693,6 @@ async function run() {
 				$set: {
 					
                     email:data.email,
-                    // phoneNumber:data.phoneNumber,
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
@@ -535,7 +721,7 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			console.log(result);
+			
 			res.send(result);
 	
 		})
@@ -547,9 +733,10 @@ async function run() {
 	
 	
 
-}
-run().catch(console.log);
-
+  }
+  run().catch(console.log);
+//! ===================< THE END >===================
+//! ===================< *** *** >===================
 
 
 
