@@ -115,10 +115,10 @@ async function run() {
 
 
 
-    //! < Start >  get Reels ======>
+    //! < Start >  get All Data ======>
 	app.get('/allData', async (req, res) => {
-		const query = { category: "reels" };
-		const result = await  addedCollection.find(query).toArray();
+		const query = {};
+		const result = await addedCollection.find(query).toArray();
 		res.send(result)
 	})
 
@@ -472,7 +472,7 @@ async function run() {
 			const id = req.params.id;
 			const filter = { _id: ObjectId(id) };
 			const data = req.body;
-			// console.log(data);
+			// console.log('filter', filter);
 			const option = { upsert: true };
 			const updatedData = {
 				$set: {
@@ -484,7 +484,7 @@ async function run() {
 				}
 			}
 			const result = await addedCollection.updateOne(filter, updatedData, option );
-			console.log(result);
+			// console.log(result);
 			res.send(result);
 	
 		})
