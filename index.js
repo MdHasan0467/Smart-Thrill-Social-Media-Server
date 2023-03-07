@@ -56,11 +56,23 @@ async function run() {
 	// Added Chat Collection
 	const addedChatCollection = client.db('Smart-Thrill').collection('Chat');
     
+    
+    
+	// Added friend-request Collection
+	const friendRequestCollection = client.db('Smart-Thrill').collection('friend-requests');
+    
+    
+    
+    
+	// Added friend-request-accept Collection
+	const friendListCollection = client.db('Smart-Thrill').collection('friend-List');
+    
 
 
 
 
-
+//!!!!      https://smart-thrill-server.vercel.app
+//!!!!      https://smart-thrill-server.vercel.app
 
 
 	//FIXME:
@@ -139,16 +151,16 @@ async function run() {
 
 
 
-    //! < Start >  get all Data ======>
-	app.get('/status', async (req, res) => {
-		const page = parseInt(req.query.page);
-		const dataSize = parseInt(req.query.dataSize);
-		const query = {};
-		const result = await (await addedCollection.find(query).skip(page*dataSize).limit(dataSize).toArray());
-		const count = await addedCollection.estimatedDocumentCount();
-		//TODO: koto gulo data ase seita count korar jonno...
-		res.send({ count, result })
-	})
+    //! < Start >  get all status ======>
+	// app.get('/status', async (req, res) => {
+	// 	const page = parseInt(req.query.page);
+	// 	const dataSize = parseInt(req.query.dataSize);
+	// 	const query = {};
+	// 	const result = await (await addedCollection.find(query).skip(page*dataSize).limit(dataSize).toArray());
+	// 	const count = await addedCollection.estimatedDocumentCount();
+	// 	//TODO: koto gulo data ase seita count korar jonno...
+	// 	res.send({ count, result })
+	// })
 
 	//!======END======>
 
@@ -174,6 +186,9 @@ async function run() {
 
 
 
+
+
+
     //! < Start >  get all user ======>
 	app.get('/my-friends', async (req, res) => {
 		const query = {};
@@ -182,6 +197,28 @@ async function run() {
 	})
 
 	//!======END======>
+
+
+
+
+
+
+
+
+
+    //! < Start >  get all users without current user ======>
+	app.get('/contact-friend/:email', async (req, res) => {
+		const email = req.params.email;
+		// console.log(email)
+		const query = { email: { $ne: email } }; // find all users except current user 
+		const result = await usersCollection.find(query).toArray();
+		res.send(result)
+	})
+
+	//!======END======>
+
+
+
 
 
 
@@ -211,6 +248,9 @@ async function run() {
 
 
 
+
+
+
     //! < Start >  get last updated status by specific email ======>
 	app.get('/status/:email', async (req, res) => {
 		const email = req.params.email;
@@ -224,6 +264,8 @@ async function run() {
 	})
 
 	//!======END======>
+
+
 
 
 
@@ -254,6 +296,10 @@ async function run() {
 
 
 
+
+
+
+
 		//!======START <- get user posted data  by user email ======>
 		app.get('/data/:email', async (req, res) => {
 			const email = req.params.email;
@@ -263,6 +309,12 @@ async function run() {
 			
 		});
 
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -281,6 +333,9 @@ async function run() {
 	
 	
 	
+	
+	
+	
 		app.get('/get/:id', async (req, res) => {
 			const id = req.params.id;
 			const filter = { _id: ObjectId(id) };
@@ -288,6 +343,9 @@ async function run() {
 			res.send(result);
 	
 			})
+	
+	
+	
 	
 	
 	
@@ -317,11 +375,49 @@ async function run() {
 	
 	
 	
+	
+	
+	
 	//!======START <- get user for AuthContext by user email ======>
 	app.get('/dynamic/:email', async (req, res) => {
 		const email = req.params.email;
 		const user = { email: email };
 		const result = await usersCollection.findOne(user);
+		res.send(result)
+	});
+		
+		// !======END======>
+	
+	
+	
+	
+	
+	//!======START <- get user for AuthContext by user email ======>
+	app.get('/Dynamic-Friend-Request-List/:email', async (req, res) => {
+		const email = req.params.email;
+		// console.log(email)
+		const user = { frndRqstReceiverEmail: email };
+		const result = await friendRequestCollection.find(user).toArray();
+		res.send(result)
+	});
+		
+		// !======END======>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//!======START <- get user for AuthContext by user email ======>
+	app.get('/Dynamic-Friend-List/:email', async (req, res) => {
+		const email = req.params.email;
+		const user = { frndRqstReceiverEmail: email };
+		// console.log(user)
+		const result = await friendListCollection.find(user).toArray();
 		res.send(result)
 	});
 		
@@ -348,7 +444,7 @@ async function run() {
 	
 
 
-	 //FIXME:
+	 //FIXME:FIXME:FIXME:FIXME:
 	 //todo = = = = = = ALL post APIs = = = = = = = = = = =
 
 
@@ -424,10 +520,31 @@ async function run() {
 
 
 
-    //! < Start >  add a new Advertise ======>
-	app.post('/ad-center', async (req, res) => {
-		const query = req.body;
-		const result = await addedAdCollection.insertOne(query);
+
+
+
+
+
+
+    //! < Start >  send friend-request ======>
+	app.post('/friend-request', async (req, res) => {
+		const send = req.body;
+		const result = await friendRequestCollection.insertOne(send);
+		res.send(result);
+	});
+
+	//!======END======>
+
+
+
+
+
+
+
+    //! < Start >  send friend-request-accept ======>
+	app.post('/friend-request-accept', async (req, res) => {
+		const send = req.body;
+		const result = await friendListCollection.insertOne(send);
 		res.send(result);
 	});
 
@@ -440,21 +557,15 @@ async function run() {
 
 
 
+    //! < Start >  add a new Advertise ======>
+	app.post('/ad-center', async (req, res) => {
+		const query = req.body;
+		const result = await addedAdCollection.insertOne(query);
+		res.send(result);
+	});
 
+	//!======END======>
 
-
-	     //FIXME:
-		//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
-	
-	    //! < Start >  Delete status ======>
-		app.delete('/:id', async (req, res) => {
-			const id = req.params.id;
-			const query = { _id: ObjectId(id) };
-			const result = await addedCollection.deleteOne(query);
-			res.send(result);
-		});
-	
-		//!======END======>
 	
 	
 	
@@ -469,6 +580,34 @@ async function run() {
 		//! update an like by clicking home page like button using it's ID
 		
 		app.put('/like/:id', async (req, res) => {
+			const id = req.params.id;
+			const filter = { _id: ObjectId(id) };
+			const data = req.body;
+			// console.log('filter', filter);
+			const option = { upsert: true };
+			const updatedData = {
+				$set: {
+					
+					likerName : data.likerName,
+					likerEmail : data.likerEmail,
+					LikerImage : data.LikerImage,
+					likes : data.likes,
+				}
+			}
+			const result = await addedCollection.updateOne(filter, updatedData, option );
+			// console.log(result);
+			res.send(result);
+	
+		})
+	
+	
+	
+	
+	
+	
+	
+		
+		app.put('/unlike/:id', async (req, res) => {
 			const id = req.params.id;
 			const filter = { _id: ObjectId(id) };
 			const data = req.body;
@@ -648,7 +787,7 @@ async function run() {
 			const result = await addedCollection.updateMany(user, updatedData, option );
 			
 			res.send(result);
-			console.log(result)
+			// console.log(result)
 		})
 	
 	
@@ -726,6 +865,43 @@ async function run() {
 	
 		})
 	
+
+
+
+
+
+
+
+
+
+
+	     //FIXME:
+		//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
+	
+	    //! < Start >  Delete status ======>
+		app.delete('/:id', async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: ObjectId(id) };
+			const result = await addedCollection.deleteOne(query);
+			res.send(result);
+		});
+	
+		//!======END======>
+	
+	
+	
+	
+	
+	
+	    //! < Start >  Delete status ======>
+		app.delete('/post/:id', async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: ObjectId(id) };
+			const result = await friendRequestCollection.deleteOne(query);
+			res.send(result);
+		});
+	
+		//!======END======>
 	
 	
 	
