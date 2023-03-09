@@ -9,13 +9,6 @@ const port = process.env.PORT || 5000;
 
 
 
-
-
-
-
-
-
-
 //! Middleware......
 app.use(cors());
 app.use(express.json());
@@ -32,15 +25,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 
-
-
-
-
 async function run() {
 
 
 
-	//FIXME:
+	//!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 	//todo = = = = = = ALL Data Collections = = = = = = = = = = =
 	
 	// User Collection
@@ -71,11 +60,11 @@ async function run() {
 
 
 
-//!!!!      https://smart-thrill-server.vercel.app
-//!!!!      https://smart-thrill-server.vercel.app
+//!!!!      smart-thrill-social-media-server.vercel.app
+//!!!!https://smart-thrill-server.vercel.app
 
 
-	//FIXME:
+	//!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 	//todo = = = = = = ALL get APIs = = = = = = = = = = =
 	
 	
@@ -98,6 +87,19 @@ async function run() {
 	app.get('/reels', async (req, res) => {
 		const query = { category: "reels" };
 		const result = await (await addedCollection.find(query).toArray()).reverse();
+		res.send(result)
+	})
+
+	//!======END======>
+
+
+
+
+
+    //! < Start >  get messages ======>
+	app.get('/api/messages', async (req, res) => {
+		const query = {};
+		const result = await addedChatCollection.find(query).toArray();
 		res.send(result)
 	})
 
@@ -360,16 +362,74 @@ async function run() {
 	
 	
 	
-	//!======START <- get message by receiver email ======>
-	app.get('/chat/:email', async (req, res) => {
-		const email = req.params.email;
-		// console.log(req.params)
-		const user = { receiverEmail: email };
-		const result = await (await addedChatCollection.find(user).toArray()).reverse();
-		res.send(result)
-	});
+	// !======START <- get message For sender email ======>
+	app.get('/chat/receiverEmail/:email', async (req, res) => {
+		const receiver = req.params.email;
+		// console.log('receiver',req.params)
+		const user = { receiverEmail: receiver };
+
+
 		
-		// !======END======>
+	app.get('/chat/senderEmail/:email', async (req, res) => {
+		const sender = req.params.email;
+		// console.log('sender',req.params)
+		const user = { senderEmail: sender };
+
+	
+
+
+	});
+	
+	if (' sender && receiver') {
+		
+		const result = await (await addedChatCollection.find(user).toArray()).reverse();
+		res.send(result)	
+		// console.log('msg',result)
+	}
+	else {
+		res.status(400).json({ errors: [{ msg: "message not available" }] });
+	}
+		
+		
+		
+	});
+
+	// !============>
+	
+
+	//!======START <- get message For receiver email ======>
+	app.get('/chatCome/receiverEmail/:email', async (req, res) => {
+		const sender = req.params.email;
+		console.log('senderCome',req.params)
+		const user = { senderEmail: sender };
+
+
+		
+	app.get('/chatCome/senderEmail/:email', async (req, res) => {
+		const receiver = req.params.email;
+		console.log('receiverCome',req.params)
+		const user = { receiverEmail: receiver };
+
+	
+
+
+	});
+	
+	if ('receiver && sender') {
+		
+		const result = await (await addedChatCollection.find(user).toArray()).reverse();
+		res.send(result)	
+		console.log('msgCome',result)
+	}
+	else {
+		res.status(400).json({ errors: [{ msg: "message not available" }] });
+	}
+		
+		
+		
+	});
+
+	// !======END======>
 	
 	
 	
@@ -392,7 +452,7 @@ async function run() {
 	
 	
 	
-	//!======START <- get user for AuthContext by user email ======>
+	//!======START <- get Dynamic-Friend-Request-List by user email ======>
 	app.get('/Dynamic-Friend-Request-List/:email', async (req, res) => {
 		const email = req.params.email;
 		// console.log(email)
@@ -412,7 +472,7 @@ async function run() {
 	
 	
 	
-	//!======START <- get user for AuthContext by user email ======>
+	//!======START <- get Dynamic-Friend-List by user email ======>
 	app.get('/Dynamic-Friend-List/:email', async (req, res) => {
 		const email = req.params.email;
 		const user = { frndRqstReceiverEmail: email };
@@ -444,7 +504,7 @@ async function run() {
 	
 
 
-	 //FIXME:FIXME:FIXME:FIXME:
+	 //!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 	 //todo = = = = = = ALL post APIs = = = = = = = = = = =
 
 
@@ -479,6 +539,19 @@ async function run() {
 	app.post('/status', async (req, res) => {
 		const status = req.body;
 		const result = await addedCollection.insertOne(status);
+		res.send(result);
+	});
+
+	//!======END======>
+
+
+
+
+
+    //! < Start >  add a new message ======>
+	app.post('/api/messages', async (req, res) => {
+		const message = req.body;
+		const result = await addedChatCollection.insertOne(message);
 		res.send(result);
 	});
 
@@ -574,7 +647,7 @@ async function run() {
 	
 	
 	
-	    //FIXME:
+	    //!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 		//todo = = = = = = ALL Update APIs = = = = = = = = = 
 	
 		//! update an like by clicking home page like button using it's ID
@@ -771,7 +844,7 @@ async function run() {
 	
 	
 	
-		//! update User profile photo in profile page  using user email
+		//! update User profile photo in every post  using user email
 		
 		app.put('/update-authorProfile/:email', async (req, res) => {
 			const email = req.params.email;
@@ -810,9 +883,34 @@ async function run() {
 				}
 			}
 			const result = await usersCollection.updateOne(user, updatedData, option );
-			
+			// console.log(result)
 			res.send(result);
 	
+		})
+	
+	
+	
+	
+	
+	
+	
+		//! update author name in every post  using user email
+		
+		app.put('/update-authorName/:email', async (req, res) => {
+			const email = req.params.email;
+			const user = { authorEmail: email };
+			const data = req.body;
+			
+			const option = { upsert: true };
+			const updatedData = {
+				$set: {
+                    authorName: data.authorName
+				}
+			}
+			const result = await addedCollection.updateMany(user, updatedData, option );
+			
+			res.send(result);
+			console.log(result)
 		})
 	
 	
@@ -875,10 +973,10 @@ async function run() {
 
 
 
-	     //FIXME:
+	     //!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 		//todo = = = = = = ALL Delete APIs = = = = = = = = = = =
 	
-	    //! < Start >  Delete status ======>
+	    //! < Start >  Delete status by its ID ======>
 		app.delete('/:id', async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: ObjectId(id) };
@@ -893,7 +991,7 @@ async function run() {
 	
 	
 	
-	    //! < Start >  Delete status ======>
+	    //! < Start >  Delete friend request by its ID ======>
 		app.delete('/post/:id', async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: ObjectId(id) };
