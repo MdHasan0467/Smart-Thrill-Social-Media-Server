@@ -60,8 +60,8 @@ async function run() {
 
 
 
-//!!!!      smart-thrill-social-media-server.vercel.app
-//!!!!https://smart-thrill-server.vercel.app
+//!!!!https:///smart-thrill-social-media-server.vercel.app
+//!!!!https:///smart-thrill-server.vercel.app
 
 
 	//!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
@@ -649,6 +649,39 @@ async function run() {
 	
 	    //!FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:FIXME:
 		//todo = = = = = = ALL Update APIs = = = = = = = = = 
+	
+		
+		
+		
+		
+		
+				//! update an user friend-request by using it's email
+		
+				app.put('/update-friend-request/:email', async (req, res) => {
+					const email = req.params.email;
+					// console.log(email)
+					const user = { email: email };
+					const data = req.body;
+					const option = { upsert: true };
+					const updatedData = {
+						$set: {
+							
+							friendRequestedBy : data.friendRequestedBy
+						}
+					}
+					const result = await usersCollection.updateOne(user, updatedData, option );
+					
+					res.send(result);
+			      console.log(result)
+				})
+
+	
+	
+	
+	
+	
+	
+	
 	
 		//! update an like by clicking home page like button using it's ID
 		
