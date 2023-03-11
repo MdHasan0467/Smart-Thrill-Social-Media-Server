@@ -472,7 +472,7 @@ async function run() {
 	
 	
 	
-	//!======START <- get Dynamic-Friend-List by user email ======>
+	//!======START <- get Dynamic-Friend-List  by user email ======>
 	app.get('/Dynamic-Friend-List/:email', async (req, res) => {
 		const email = req.params.email;
 		const user = { frndRqstReceiverEmail: email };
@@ -481,7 +481,10 @@ async function run() {
 		res.send(result)
 	});
 		
-		// !======END======>
+	// !======END======>
+	
+	
+	
 	
 	
 	
